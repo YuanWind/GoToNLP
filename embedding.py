@@ -57,8 +57,7 @@ def load_predtrained_emb_avg(words_dic, path='pre_embed_vec/sgns.target.word-ngr
     for i in range(word_size):
         if i not in in_word_list:
             if not padding:
-
-                    embedding[i] = avg_col
+                embedding[i] = avg_col
             elif padID in in_word_list:
                 embedding[i] = embedding[padID]
 

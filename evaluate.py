@@ -58,6 +58,7 @@ def calc_micro_f1(true,pred):
     R=TP/(TP+FN)
     F1=2*P*R/(P+R)
     return P,R,F1
+
 def calc_acc(true,pred):
     total=0
     for idx,label in enumerate(true):

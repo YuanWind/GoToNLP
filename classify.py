@@ -4,13 +4,12 @@
 # @Email   : yywind@126.com
 # @File    : classify.py
 import torch
-from torch import optim, nn
+import time
+from torch import optim
 from BiLSTM import BiLSTM
-from evaluate import calc_micro_f1, calc_acc
-from utils import load_pkl_data, get_time, dump_pkl_data, get_batches,padding_data
+from evaluate import calc_micro_f1, calc_acc, calc_macro_f1
+from utils import load_pkl_data, get_time, dump_pkl_data, get_batches, padding_data, autoDevice
 import torch.nn.functional as F
-
-
 def get_X_y(vocab,data,label_id):
     X=[]
     y=[]
@@ -51,7 +50,6 @@ def get_test(train_word_id,label_id,data,batch_size):
         train_id.append(one_id)
     return train_id,train_label_id,train_id_len
 
-batch_size=16
 train_word_id=load_pkl_data('data/hotel_word_id(train).pkl')
 train_id_word=load_pkl_data('data/hotel_id_word(train).pkl')
 label_id=load_pkl_data('data/hotel_label_id(train).pkl')
@@ -59,17 +57,21 @@ train_data=load_pkl_data('data/hotel_train.pkl') #13913
 dev_data=load_pkl_data('data/hotel_dev.pkl') #4372
 test_data=load_pkl_data('data/hotel_test.pkl') #2150
 train_X,train_y=get_X_y(train_word_id,train_data,label_id)
-
 test_X,test_y=get_X_y(train_word_id,test_data,label_id)
-model=BiLSTM(train_word_id, label_id,max_len=64)
+
+batch_size=64
+max_len=64
+model=BiLSTM(train_word_id, label_id,max_len=max_len)
+model = autoDevice(model,type='net')
 optimizer = optim.Adam(model.parameters(), lr=0.0001, weight_decay=1e-8)
+start_=time.time()
 for epoch in range(5):
     step=0
     for X,y in get_batches(train_X,train_y,batch_size=batch_size,shuffle=False):
-        X, true_len = padding_data(X, max_seqlen=64, padding_value=0)
-        X = torch.LongTensor(X)
-        y = torch.LongTensor(y)
-        true_len = torch.LongTensor(true_len)
+        X, true_len = padding_data(X, max_seqlen=max_len, padding_value=0)
+        X = autoDevice(torch.LongTensor(X))
+        y = autoDevice(torch.LongTensor(y))
+        true_len = autoDevice(torch.LongTensor(true_len))
         model.train()
         model.zero_grad()
         probs = model(X,true_len)
@@ -78,33 +80,35 @@ for epoch in range(5):
         step+=1
         if step % 10 == 0:
             _, pred = torch.max(probs, dim=1)
-            pred = pred.view(-1).data.numpy()
+            pred = pred.view(-1).cpu().data.numpy()
             acc=calc_acc(y,pred)
             time_dic = get_time()
-            time_str = "[{}-{:0>2d}-{:0>2d} {:0>2d}:{:0>2d}:{:0>2d}]".format(time_dic['year'], time_dic['month'],
-                                                                             time_dic['day'], \
-                                                                             time_dic['hour'], time_dic['min'],
-                                                                             time_dic['sec'])
+            time_str = "[{}-{:0>2d}-{:0>2d} {:0>2d}:{:0>2d}:{:0>2d}]".format(time_dic['year'], time_dic['month'],time_dic['day'],time_dic['hour'], time_dic['min'],time_dic['sec'])
             log = time_str + " Epoch {} step [{}] acc: {:.2f} loss: {:.6f}".format(epoch, step, acc,float(loss.data))
             print(log)
         loss.backward()
         optimizer.step()
+
     label=[]
     pred_label=[]
     for X,y in get_batches(test_X,test_y,batch_size=batch_size,shuffle=False):
-        X, true_len = padding_data(X, max_seqlen=64, padding_value=0)
-        X = torch.LongTensor(X)
-        y = torch.LongTensor(y)
-        true_len = torch.LongTensor(true_len)
+        X, true_len = padding_data(X, max_seqlen=max_len, padding_value=0)
+        X = autoDevice(torch.LongTensor(X))
+        label.extend(y)
+        y = autoDevice(torch.LongTensor(y))
+        true_len = autoDevice(torch.LongTensor(true_len))
         model.eval()
-
         probs = model(X, true_len)
         _, pred = torch.max(probs, dim=1)
-        pred = pred.view(-1).data.numpy()
-        label.extend(y)
+        pred = pred.view(-1).cpu().data.numpy()
         pred_label.extend(list(pred))
-    p,r,f1=calc_micro_f1(label, pred_label)
+    p,r,micro_f1=calc_micro_f1(label, pred_label)
+    p,r,macro_f1=calc_macro_f1(label, pred_label)
+    acc=calc_acc(label, pred_label)
     dump_pkl_data(label,'res/label_'+str(epoch)+'.pkl')
     dump_pkl_data(pred_label,'res/pred_label_'+str(epoch)+'.pkl')
-    print('Epoch:{},micro_p,micro_r,micro_f1:{},{},{}'.format(epoch,p,r,f1))
+    print('Epoch:{},macro_f1,micro_r,acc:{:.5f},{:.5f},{:.5f}'.format(epoch,micro_f1,macro_f1,acc))
     # print(calc_macro_f1(dev_label_id,list(pred)))
+
+end_=time.time()
+print('{:.3f}s'.format(end_-start_))
