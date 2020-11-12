@@ -12,6 +12,7 @@ from BiLSTM import BiLSTM
 from evaluate import calc_micro_f1, calc_acc, calc_macro_f1
 from utils import load_pkl_data, get_time, dump_pkl_data, get_batches, padding_data, returnDevice
 import torch.nn.functional as F
+start_=time.time()
 device = returnDevice()
 
 
@@ -65,15 +66,16 @@ train_X,train_y=get_X_y(train_word_id,train_data,label_id)
 dev_X,dev_y=get_X_y(train_word_id,dev_data,label_id)
 test_X,test_y=get_X_y(train_word_id,test_data,label_id)
 
-lr=0.001
+lr=0.0001
 lr_decay_rate=0.1
-batch_size=64
+batch_size=8
 max_len=64
 epochs=10
+print_every_step=100
 
 model=BiLSTM(train_word_id, label_id,max_len=max_len).to(device)
 optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=1e-8)
-start_=time.time()
+
 
 
 def eval(type,epoch):
@@ -116,7 +118,7 @@ def eval(type,epoch):
     ma_p, ma_r, macro_f1 = calc_macro_f1(label, pred_label)
     acc = calc_acc(label, pred_label)
 
-    print('{}--> micro_f1={:.4f},macro_f1={:.4f},acc={:.4f},loss={:.4f}'.format(type, micro_f1, macro_f1, acc*100,float(total_loss/init_num)))
+    print('{}--> epoch:{}--> micro_f1={:.4f},macro_f1={:.4f},acc={:.4f},loss={:.4f}'.format(type,epoch, micro_f1, macro_f1, acc*100,float(total_loss/init_num)))
     return micro_f1,macro_f1,acc
 
 def save_model(epoch,model_dir):
@@ -127,6 +129,7 @@ def save_model(epoch,model_dir):
     """
     if not os.path.isdir(model_dir):
         os.mkdir(model_dir)
+
     fname =os.path.join(model_dir,'epoch_'+str(epoch) + '.pt')
     torch.save(model.state_dict(), fname)
     print('model saved succeed in ' + fname)
@@ -144,8 +147,8 @@ def adjust_learning_rate(optim, lr_decay_rate):
 
 best_score=0
 best_score_epoch=0
-early_stop=4
-lr_decay_every=2
+early_stop=0 #为0时不提前结束
+lr_decay_every=3
 
 for epoch in range(epochs):
     step = 0
@@ -173,7 +176,7 @@ for epoch in range(epochs):
         total_loss+=loss
         step+=1
 
-        if step % 10 == 0:
+        if step % print_every_step == 0:
             avg_loss=total_loss/init_num
             acc=calc_acc(true_y,pred_y)
             time_dic = get_time()
@@ -185,7 +188,7 @@ for epoch in range(epochs):
             true_y, pred_y = [], []
         loss.backward()
         optimizer.step()
-    micro_f1,macro_f1,acc=eval('dev')
+    micro_f1,macro_f1,acc=eval('dev',epoch)
     if acc>best_score:
         early_stop_count = 0
         lr_decay_count = 0
@@ -197,16 +200,16 @@ for epoch in range(epochs):
     else:
         early_stop_count += 1
         lr_decay_count += 1
-    if early_stop_count == early_stop:
-        log = "{} epoch have not improved, so early stop the train!".format(early_stop_count)
+    if early_stop!=0 and early_stop_count == early_stop:
+        log = "{} epochs passed, has not improved, so early stop the train!".format(early_stop_count)
         break
     if lr_decay_count == lr_decay_every:
         lr_decay_count = 0
         adjust_learning_rate(optimizer, lr_decay_rate)
-        log = "{} epoch have not improved, so adjust lr to {}".format(early_stop_count, lr)
+        log = "{} epochs passed, has not improved, so adjust lr to {}".format(early_stop_count, lr)
         print(log)
 
 print('加载dev上效果最好的模型评测test数据集：')
-eval('test')
+eval('test',best_score_epoch)
 end_=time.time()
 print('共用时：{:.3f}s'.format(end_-start_))
