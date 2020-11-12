@@ -152,7 +152,7 @@ def autoDevice(obj, type='tensor', GPU_first=True):
     """
     根据是否有GPU来自动选择是否使用cuda来转换
     :param obj: 待转换的对象
-    :param type: 'net' 或者 'tensor'，前者将模型转到GPU，后者将tensor转到GPU
+    :param type: 'net' 或者 'tensor'，前者将模型转到GPU且成功时会给出提示，后者将tensor转到GPU无提示信息
     :param GPU_first: False时，不管是否有GPU都不使用GPU
     :return: 转换后的对象
     """
@@ -161,8 +161,13 @@ def autoDevice(obj, type='tensor', GPU_first=True):
     if (cuda_gpu and GPU_first):
         if type == 'net':
             obj = torch.nn.DataParallel(obj, device_ids=gpus).cuda()  # 将模型转为cuda类型
+            print('模型成功转到GPU上！----当前GPU：',torch.cuda.get_device_name(0))
         elif type == 'tensor':
             obj = obj.cuda()
         else:
             print('既不是net也不是tensor,直接返回！')
     return obj
+
+def returnDevice(GPU_first=True):
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    return device
