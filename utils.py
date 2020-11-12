@@ -76,7 +76,7 @@ def get_time():
     return dic
 
 
-def get_batches(data_x, data_y, batch_size=16, shuffle=True):
+def get_batches_byPadding(data_x, data_y, batch_size=16, shuffle=True,max_seqlen=64, padding_value=0):
     """
     批数据生成器
     :param data_x: 数据x
@@ -98,16 +98,17 @@ def get_batches(data_x, data_y, batch_size=16, shuffle=True):
         for i in excerpt:
             X.append(data_x[i])
             y.append(data_y[i])
-        yield X, y
+            X, true_len = padding_data(X, max_seqlen=max_seqlen, padding_value=padding_value)
+        yield X, y,true_len
         start_idx += batch_size
 
 
-def get_batches_by_len(data_x, data_y, max_batch_size=32, shuffle=True):
+def get_batches_by_len(data_x, data_y, batch_size=32, shuffle=True):
     """
     批数据生成器
     :param data_x: 数据x
     :param data_y: 标签y
-    :param batch_size:
+    :param batch_size:设置最大的batch_size
     :param shuffle: 是否打乱顺序
     :return:
     """
@@ -116,16 +117,38 @@ def get_batches_by_len(data_x, data_y, max_batch_size=32, shuffle=True):
         index = np.random.randint(0, length, length)
     else:
         index = list(range(length))
-    start_idx = 0
-    while start_idx < length:
-        end_idx = min(length, start_idx + max_batch_size)
-        excerpt = index[start_idx:end_idx]
-        X, y = [], []
-        for i in excerpt:
-            X.append(data_x[i])
-            y.append(data_y[i])
-        yield X, y
-        start_idx += max_batch_size
+    seq_len={} #len_x---idx
+    for idx,x in enumerate(data_x):
+        len_x=len(x)
+        if len_x not in seq_len.keys():
+            seq_len[len_x]=[idx]
+        else:
+            seq_len[len_x].append(idx)
+    for len_x,idsx in seq_len.items():
+        total_x=len(idsx)
+        sum_x=0
+        if total_x <= batch_size:
+            X, y = [], []
+            for idx in idsx:
+                X.append(data_x[idx])
+                y.append(data_y[idx])
+                true_len = [len(X[0]) for _ in range(len(y))]
+                yield X, y,true_len
+        else:
+            X, y = [], []
+            for idx in idsx:
+                X.append(data_x[idx])
+                y.append(data_y[idx])
+                sum_x+=1
+                if sum_x==batch_size:
+                    true_len = [len(X[0]) for _ in range(len(y))]
+                    yield X, y,true_len
+                    X, y = [], []
+                    sum_x=0
+            if len(y)!=0: # 如果batch_size=8,而idxs有18项，那么最后就会返回一个空的batch
+                true_len = [len(X[0]) for _ in range(len(y))]
+                yield X, y, true_len
+
 
 
 

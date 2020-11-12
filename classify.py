@@ -10,7 +10,7 @@ import time
 from torch import optim
 from BiLSTM import BiLSTM
 from evaluate import calc_micro_f1, calc_acc, calc_macro_f1
-from utils import load_pkl_data, get_time, dump_pkl_data, get_batches, padding_data, returnDevice
+from utils import load_pkl_data, get_time, returnDevice, get_batches_by_len
 import torch.nn.functional as F
 start_=time.time()
 device = returnDevice()
@@ -71,10 +71,15 @@ lr=0.0001
 lr_decay_rate=0.1
 batch_size=8
 max_len=64
-epochs=10
+epochs=100
 print_every_step=100
+best_score=0
+best_score_epoch=0
+early_stop=10 #为0时不提前结束
+lr_decay_every=3
 
-model=BiLSTM(train_word_id, label_id,max_len=max_len).to(device)
+
+model=BiLSTM(train_word_id, label_id).to(device)
 optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=1e-8)
 
 
@@ -99,14 +104,14 @@ def eval(type,epoch):
         model.eval()
     else:
         raise RuntimeError('type wrong!')
-    for X, y in get_batches(data_X,data_y, batch_size=batch_size, shuffle=False):
+    for X, y,true_len in get_batches_by_len(data_X,data_y, batch_size=batch_size, shuffle=False):
         init_num+=1
-        X, true_len = padding_data(X, max_seqlen=max_len, padding_value=0)
-        X = torch.LongTensor(X).to(device)
         label.extend(y)
+        # X, true_len = padding_data(X, max_seqlen=max_len, padding_value=0)
+        X = torch.LongTensor(X).to(device)
         y = torch.LongTensor(y).to(device)
         true_len = torch.LongTensor(true_len).to(device)
-        probs = model(X, true_len)
+        probs = model(X, true_len,true_len[0])
         _, pred = torch.max(probs, dim=1)
         log_probs = torch.log(probs)  # 由于我的lstm的输出已经进行了softmax，所以此处只用进行 log 和
         loss = F.nll_loss(log_probs, y)  #
@@ -146,27 +151,22 @@ def adjust_learning_rate(optim, lr_decay_rate):
         lr=param_group['lr']
 
 
-best_score=0
-best_score_epoch=0
-early_stop=0 #为0时不提前结束
-lr_decay_every=3
+
 
 for epoch in range(epochs):
     step = 0
     total_loss=torch.FloatTensor([0])
     init_num=0
     true_y,pred_y=[],[]
-    for X,y in get_batches(train_X,train_y,batch_size=batch_size,shuffle=False):
+    for X, y,true_len in get_batches_by_len(train_X,train_y,batch_size=batch_size,shuffle=False):
         init_num+=1
         true_y.extend(y)
-
-        X, true_len = padding_data(X, max_seqlen=max_len, padding_value=0)
         X = torch.LongTensor(X).to(device)
         y = torch.LongTensor(y).to(device)
         true_len = torch.LongTensor(true_len).to(device)
         model.train()
         model.zero_grad()
-        probs = model(X,true_len)
+        probs = model(X,true_len,true_len[0])
         _, pred = torch.max(probs, dim=1)
         pred = pred.view(-1).cpu().data.numpy()
         pred_y.extend(list(pred))
