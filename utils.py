@@ -102,6 +102,33 @@ def get_batches(data_x, data_y, batch_size=16, shuffle=True):
         start_idx += batch_size
 
 
+def get_batches_by_len(data_x, data_y, max_batch_size=32, shuffle=True):
+    """
+    批数据生成器
+    :param data_x: 数据x
+    :param data_y: 标签y
+    :param batch_size:
+    :param shuffle: 是否打乱顺序
+    :return:
+    """
+    length = len(data_y)
+    if shuffle:
+        index = np.random.randint(0, length, length)
+    else:
+        index = list(range(length))
+    start_idx = 0
+    while start_idx < length:
+        end_idx = min(length, start_idx + max_batch_size)
+        excerpt = index[start_idx:end_idx]
+        X, y = [], []
+        for i in excerpt:
+            X.append(data_x[i])
+            y.append(data_y[i])
+        yield X, y
+        start_idx += max_batch_size
+
+
+
 def padding_data(data_x, max_seqlen=0, padding_value=0, methord=''):
     """
     用 padding_value 按照某种方式 padding ，返回padding后的list

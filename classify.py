@@ -4,7 +4,7 @@
 # @Email   : yywind@126.com
 # @File    : classify.py
 import os
-
+import random
 import torch
 import time
 from torch import optim
@@ -14,7 +14,8 @@ from utils import load_pkl_data, get_time, dump_pkl_data, get_batches, padding_d
 import torch.nn.functional as F
 start_=time.time()
 device = returnDevice()
-
+random.seed(88)
+torch.manual_seed(88)
 
 def get_X_y(vocab,data,label_id):
     X=[]
@@ -90,7 +91,7 @@ def eval(type,epoch):
     label = []
     pred_label = []
     if type=='dev':
-        data_X,data_y=test_X,test_y
+        data_X,data_y=dev_X,dev_y
         model.eval()
     elif type=='test':
         data_X,data_y=test_X,test_y
