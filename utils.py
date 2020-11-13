@@ -76,7 +76,7 @@ def get_time():
     return dic
 
 
-def get_batches_byPadding(data_x, data_y, batch_size=16, shuffle=True,max_seqlen=64, padding_value=0):
+def get_batches_by_padding(data_x, data_y, batch_size=16, shuffle=True,max_seqlen=64, padding_value=0):
     """
     批数据生成器
     :param data_x: 数据x
@@ -98,7 +98,7 @@ def get_batches_byPadding(data_x, data_y, batch_size=16, shuffle=True,max_seqlen
         for i in excerpt:
             X.append(data_x[i])
             y.append(data_y[i])
-            X, true_len = padding_data(X, max_seqlen=max_seqlen, padding_value=padding_value)
+        X, true_len = padding_data(X, max_seqlen=max_seqlen, padding_value=padding_value)
         yield X, y,true_len
         start_idx += batch_size
 
@@ -219,5 +219,8 @@ def autoDevice(obj, type='tensor', GPU_first=True):
     return obj
 
 def returnDevice(GPU_first=True):
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    if GPU_first:
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    else:
+        device='cpu'
     return device

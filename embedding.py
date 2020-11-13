@@ -62,7 +62,7 @@ def load_predtrained_emb_avg(words_dic, path='pre_embed_vec/sgns.target.word-ngr
                 embedding[i] = embedding[padID]
 
 
-    print("done")
+    print("load done")
     print("{} words, {} in_words    {} OOV!".format(len(words_dic), len(in_word_list), len(words_dic) - len(in_word_list)))
     '''
         save

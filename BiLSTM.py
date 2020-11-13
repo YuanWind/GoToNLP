@@ -14,25 +14,33 @@ from utils import  returnDevice
 device = returnDevice()
 
 class BiLSTM(nn.Module):
-    def __init__(self, word_id, label_id):
+    def __init__(self, opts,word_id, label_id):
         super(BiLSTM, self).__init__()
+        self.input_size = opts.input_size
+        self.hidden_size = opts.hidden_size
+        self.num_layers = opts.num_layers
+        self.dropout = opts.dropout
+        self.batch_first = opts.batch_first
+        self.embedding_dim=opts.embedding_dim
+        self.bidirectional=opts.bidirectional
         #  nn.Embedding(num_embeddings: int, embedding_dim: int),(词汇表的大小，嵌入的维度）
-        self.embeddings = nn.Embedding(len(word_id), 300)  # 将词汇表进行embedding，由于找的预训练词向量是300维的，因此这里的第二个维度是300维
+        self.embeddings = nn.Embedding(len(word_id), self.embedding_dim)  # 将词汇表进行embedding，由于找的预训练词向量是300维的，因此这里的第二个维度是300维
         embedding = load_predtrained_emb_avg(word_id)  #自定义的方法读取预训练的词向量， 中文词向量来源：https://github.com/Embedding/Chinese-Word-Vectors
         self.embeddings.weight.data.copy_(embedding)  # 将读取的词向量复制到嵌入向量中
+
         # bidirectional设为True即得到双向循环神经网络
         self.lstm = nn.LSTM(
-            input_size=300,  # input_size 输入数据的特征维数，通常就是embedding_dim(词向量的维度)
-            hidden_size=300,  # hidden_size　LSTM中隐层的维度
-            num_layers=2,  # num_layers　循环神经网络的层数
-            dropout=0.1,  # 是否在除最后一个 RNN 层外的其他 RNN 层后面加 dropout 层。输入值是 0-1 之间的小数，表示概率。0表示0概率dripout，即不dropout
-            batch_first=True,
+            input_size=self.input_size,  # input_size 输入数据的特征维数，通常就是embedding_dim(词向量的维度)
+            hidden_size=self.hidden_size,  # hidden_size　LSTM中隐层的维度
+            num_layers=self.num_layers,  # num_layers　循环神经网络的层数
+            dropout=self.dropout,  # 是否在除最后一个 RNN 层外的其他 RNN 层后面加 dropout 层。输入值是 0-1 之间的小数，表示概率。0表示0概率dripout，即不dropout
+            batch_first=self.batch_first,
             # batch_first默认为False，则lstm输入的数据默认为：(seq_max_len,batch_size,input_size), 而我们常用的格式是(batch_size,seq_max_len,input_size),所以这里把batch_size设置为True，输入数据就已后者为准。
-            bidirectional=True  # 是否为双向BiLSTM，双向：num_directions=2
+            bidirectional=self.bidirectional  # 是否为双向BiLSTM，双向：num_directions=2
         )
 
         # 全连接层：这里将前向LSTM隐藏层的输出和后向隐藏层的输出拼接到一起作为全连接层的输入，输出为类别的数目
-        self.output = nn.Linear(2 * 300, len(label_id))
+        self.output = nn.Linear(2 * self.hidden_size, len(label_id))
 
     def bi_fetch(self,rnn_outs, seq_lengths, batch_size, max_len):
         """
@@ -72,13 +80,13 @@ class BiLSTM(nn.Module):
         embeddings = self.embeddings(inputs)
         batch_size = len(embeddings)
         # lstm_input:(batch_size,seq_max_len,embedding)
-        lstm_input = embeddings.view(batch_size, -1, 300)
+        lstm_input = embeddings.view(batch_size, -1,self.embedding_dim )
         # output:(seq_max_len,batch_size,num_directions*hidden_size)
         #h_n(num_layers * num_directions, batch, hidden_size)
         #c_n(num_layers * num_directions, batch, hidden_size)
         output, (h_n,c_n) = self.lstm(lstm_input)
         # outs(batch_size,seq_len,num_directions*hidden_size)
-        outs = output.contiguous().view(batch_size, -1, 2 * 300)
+        outs = output.contiguous().view(batch_size, -1, 2 * self.hidden_size)
         # bi_fetch取出前向LSTM的隐藏层和后向的LSTM的隐藏层输出拼接到一起返回
         # sentence_batch:(batch_size,2*hidden_size)
         sentence_batch = self.bi_fetch(outs, lengths, batch_size, max_len=max_len)
