@@ -11,11 +11,11 @@ from torch.autograd import Variable
 
 from utils import  returnDevice
 
-device = returnDevice()
-
 class BiLSTM(nn.Module):
     def __init__(self, opts,word_id, label_id):
         super(BiLSTM, self).__init__()
+
+        self.device = returnDevice(opts.cuda)
         self.input_size = opts.input_size
         self.hidden_size = opts.hidden_size
         self.num_layers = opts.num_layers
@@ -54,16 +54,16 @@ class BiLSTM(nn.Module):
 
         rnn_outs = rnn_outs.view(batch_size, max_len, 2, -1)  # 将双向的隐藏层参数分开
         # torch.index_select(),第一个参数是索引的对象，第二个参数指示选择哪个维度的数据，第三个参数是一个tensor，表示选择哪些数据。
-        fw_out = torch.index_select(rnn_outs, 2, Variable(torch.LongTensor([0]).to(device)))#
+        fw_out = torch.index_select(rnn_outs, 2, Variable(torch.LongTensor([0]).to(self.device)))#
         fw_out = fw_out.view(batch_size * max_len, -1)
-        bw_out = torch.index_select(rnn_outs, 2, Variable(torch.LongTensor([1]).to(device)))
+        bw_out = torch.index_select(rnn_outs, 2, Variable(torch.LongTensor([1]).to(self.device)))
         bw_out = bw_out.view(batch_size * max_len, -1)
         # 每隔一个max_len长度是batch中的一个句子，我们要选择padding之前的隐藏层向量
         # 比如前两个句子实际长度为：3,4，padding后变成了max_len=12,那么我们就要选择序号为[3,4]隐藏层的向量，再往后就是padding的向量，就扔掉。
         # batch_range:[0*max_len,1*max_len,....,batch_size*max_len]
-        batch_range = Variable(torch.LongTensor(list(range(batch_size))).to(device)) * max_len
+        batch_range = Variable(torch.LongTensor(list(range(batch_size))).to(self.device)) * max_len
         # batch_zeros:[0,0,...,0] 一共batch_size个0
-        batch_zeros = Variable(torch.zeros(batch_size).to(device).long())
+        batch_zeros = Variable(torch.zeros(batch_size).to(self.device).long())
 
         fw_index = batch_range + seq_lengths.view(batch_size) - 1
         fw_out = torch.index_select(fw_out, 0, fw_index)  # (batch_size, hid)

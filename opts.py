@@ -6,7 +6,7 @@
 
 class opts():
     def __init__(self):
-        self.cuda = True
+        self.cuda = False
         self.seed=88
         self.lr=0.0001
         self.lr_decay_rate=0.1
