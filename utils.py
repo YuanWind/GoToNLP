@@ -8,27 +8,103 @@ import time
 import numpy as np
 import pickle
 import torch
-
+from tqdm import tqdm
+import pandas
+import torch.nn as nn
 
 def dump_pkl_data(data, f_name):
     with open(f_name, 'wb') as f:
         pickle.dump(data, f)
 
-
 def load_pkl_data(f_name):
     with open(f_name, 'rb') as f:
         return pickle.load(f)
+# 权重初始化，默认xavier
+def init_network(model, method='xavier', exclude='embedding', seed=123):
+    for name, w in model.named_parameters():
+        if exclude not in name:
+            if 'weight' in name:
+                if method == 'xavier':
+                    nn.init.xavier_normal_(w)
+                elif method == 'kaiming':
+                    nn.init.kaiming_normal_(w)
+                else:
+                    nn.init.normal_(w)
+            elif 'bias' in name:
+                nn.init.constant_(w, 0)
+            else:
+                pass
+def load_predtrained_emb_avg(words_dic, path='pre_embed_vec/sgns.target.word-ngram.1-2.dynwin5.thr10.neg5.dim300.iter5.txt',padding=False):
+    """
+    读取预训练词向量
+    :param words_dic: 传入的词：dict(word,id) ,id一定要从0开始，否则下边构建np.array的时候会出问题
+    :param path: 预训练模型下载地址：https://github.com/Embedding/Chinese-Word-Vectors
+    :param padding:是否进行padding处理
+    :param save:是否保存结果到文件
+    :return:提取的预训练词向量
+    """
+
+    print("start to load predtrained embedding...")
+    if padding:
+        padID = words_dic['unknow']
+    embeding_dim = -1
+    with open(path, encoding='utf-8') as f:
+        line=f.readline()# 第一行是相关信息，所以要接着读取一行
+        line=f.readline()
+        line = line.strip().split(" ")
+        if len(line) <= 1:
+            print("load_predtrained_embedding text is wrong!  -> len(line) <= 1")
+        else:
+            embeding_dim = len(line) - 1
+    word_size = len(words_dic)
+    print("The word size is ", word_size)
+    print("The dim of predtrained embedding is ", embeding_dim, "\n")
+
+    lines = []
+    embedding = np.zeros((word_size, embeding_dim))
+    in_word_list = []
+
+    with open(path, encoding='utf-8') as f:
+        i=0
+        for line in tqdm(f.readlines()):
+            if i==0: #跳过第一行
+                i+=1
+                continue
+            rawline = line
+            line = line.strip().split(' ')
+            index = words_dic.get(line[0])
+            if index:
+                lines.append(rawline)
+                vector = np.array(line[1:], dtype='float32')
+                embedding[index] = vector
+                in_word_list.append(index)
+
+    avg_col = np.sum(embedding, axis=0) / len(in_word_list) #按列求平均值
+    for i in range(word_size):
+        if i not in in_word_list:
+            if not padding:
+                embedding[i] = avg_col
+            elif padID in in_word_list:
+                embedding[i] = embedding[padID]
 
 
-def cut_str_by_len(str_, len):
+    print("load done")
+    print("{} words, {} in_words    {} OOV!".format(len(words_dic), len(in_word_list), len(words_dic) - len(in_word_list)))
+
+    return torch.from_numpy(embedding).float()
+
+def cut_str_by_len(str_, length):
     """
     将字符串str_按长度len拆分: ('abcdefg',3)-->['abc','def','g']
     :param str_: 待拆分的字符串
-    :param len: 拆分长度
+    :param length: 拆分长度
     :return: 拆分后的字符串列表
     """
-    return [str_[i:i + len] for i in range(0, len(str_), len)]
+    return [str_[i:i + length] for i in range(0, len(str_), length)]
 
+def cut_sent(sent):
+    import jieba
+    return list(jieba.cut(sent))
 
 def preprocess(sen):
     """
@@ -103,7 +179,7 @@ def get_batches_by_padding(data_x, data_y, batch_size=16, shuffle=True,max_seqle
         start_idx += batch_size
 
 
-def get_batches_by_len(data_x, data_y, batch_size=32, shuffle=True):
+def get_batches_by_len(data_x, data_y, batch_size=32):
     """
     批数据生成器
     :param data_x: 数据x
@@ -112,31 +188,26 @@ def get_batches_by_len(data_x, data_y, batch_size=32, shuffle=True):
     :param shuffle: 是否打乱顺序
     :return:
     """
-    length = len(data_y)
-    if shuffle:
-        index = np.random.randint(0, length, length)
-    else:
-        index = list(range(length))
-    seq_len={} #len_x---idx
+    seq_len={} #len_x---idxs
     for idx,x in enumerate(data_x):
         len_x=len(x)
         if len_x not in seq_len.keys():
             seq_len[len_x]=[idx]
         else:
             seq_len[len_x].append(idx)
-    for len_x,idsx in seq_len.items():
-        total_x=len(idsx)
+    for len_x,idxs in seq_len.items():
+        total_x=len(idxs)
         sum_x=0
         if total_x <= batch_size:
             X, y = [], []
-            for idx in idsx:
+            for idx in idxs:
                 X.append(data_x[idx])
                 y.append(data_y[idx])
-                true_len = [len(X[0]) for _ in range(len(y))]
-                yield X, y,true_len
+            true_len = [len(X[0]) for _ in range(len(y))]
+            yield X, y,true_len
         else:
             X, y = [], []
-            for idx in idsx:
+            for idx in idxs:
                 X.append(data_x[idx])
                 y.append(data_y[idx])
                 sum_x+=1
@@ -149,7 +220,93 @@ def get_batches_by_len(data_x, data_y, batch_size=32, shuffle=True):
                 true_len = [len(X[0]) for _ in range(len(y))]
                 yield X, y, true_len
 
+def get_test_batches_by_len(data_x, data_idx, batch_size=32):
+    """
+    批数据生成器
+    :param data_x: 数据x
+    :param data_y: 标签y
+    :param batch_size:设置最大的batch_size
+    :param shuffle: 是否打乱顺序
+    :return:
+    """
+    length = len(data_idx)
+    print('count:',length)
+    seq_len={} #len_x---idx
+    for idx,x in enumerate(data_x):
+        len_x=len(x)
+        if len_x not in seq_len.keys():
+            seq_len[len_x]=[idx]
+        else:
+            seq_len[len_x].append(idx)
+    for len_x,idxs in seq_len.items():
+        total_x=len(idxs)
+        sum_x=0
+        if total_x <= batch_size:
+            X, true_idxs = [], []
+            for idx in idxs:
+                X.append(data_x[idx])
+                true_idxs.append(data_idx[idx])
+            true_len = [len(X[0]) for _ in range(len(true_idxs))]
+            yield X, true_idxs,true_len
+        else:
+            X, true_idxs = [], []
+            for idx in idxs:
+                X.append(data_x[idx])
+                true_idxs.append(data_idx[idx])
+                sum_x+=1
+                if sum_x==batch_size:
+                    true_len = [len(X[0]) for _ in range(len(true_idxs))]
+                    yield X, true_idxs,true_len
+                    X, true_idxs = [], []
+                    sum_x=0
+            if len(true_idxs)!=0: # 如果batch_size=8,而idxs有18项，那么最后就会返回一个空的batch
+                true_len = [len(X[0]) for _ in range(len(true_idxs))]
+                yield X, true_idxs, true_len
 
+
+def build_dataset(opts,use_word=True):
+    train=pandas.read_csv(opts.train_data_path,sep='\t',names=['content','label'])
+    dev=pandas.read_csv(opts.dev_data_path,sep='\t',names=['content','label'])
+    test=pandas.read_csv(opts.test_data_path,sep='\t',names=['content','label'])
+    print('空值统计--train_data:\n{}\n 空值统计--dev_data:\n{}\n空值统计--test_data:\n{}\n,有空值的行将被去掉！'.format(train.isnull().sum(),dev.isnull().sum(),test.isnull().sum()))
+    # df.dropna(axis=0, how='any', inplace=True)
+    # axis：0: 行操作（默认）1: 列操作how：any: 只要有空值就删除（默认）all:全部为空值才删除inplace：False: 返回新的数据集（默认）True: 在愿数据集上操作
+    train.dropna(axis=0, how='any', inplace=True)
+    dev.dropna(axis=0, how='any', inplace=True)
+    test.dropna(axis=0, how='any', inplace=True)
+    label2id={}
+    id2label={}
+    with open(opts.class_path,'r',encoding='utf-8') as f:
+        for idx,cls in enumerate(f):
+            label2id.update({cls:idx})
+            id2label.update({idx:cls})
+    dump_pkl_data(label2id,opts.label_id_path)
+    dump_pkl_data(id2label,opts.id_label_path)
+    if use_word:
+        tokenizer = lambda x: cut_sent(x)  # 以空格隔开，word-level
+    else:
+        tokenizer = lambda x: [y for y in x]  # char-level
+    vocab={}
+    for idx in train.index:
+        content=train.loc[idx,'content']
+        tokens=tokenizer(content)
+        for token in tokens:
+            if token not in vocab.keys():
+                vocab.update({token:len(vocab)})
+    vocab['unknow']=len(vocab)
+    dump_pkl_data(vocab,opts.vocab_path)
+    def gen_data(data,tokenizer):
+        res=[]
+        for idx in data.index:
+            content = data.loc[idx, 'content']
+            tokens = tokenizer(content)
+            label=data.loc[idx,'label']
+            res.append({label:tokens})
+        return res
+    train_data=gen_data(train,tokenizer)
+    dev_data=gen_data(dev,tokenizer)
+    test_data=gen_data(test,tokenizer)
+    return train_data,dev_data,test_data
 
 
 def padding_data(data_x, max_seqlen=0, padding_value=0, methord=''):
@@ -218,9 +375,9 @@ def autoDevice(obj, type='tensor', GPU_first=True):
             print('既不是net也不是tensor,直接返回！')
     return obj
 
-def returnDevice(GPU_first=True):
+def returnDevice(GPU_first=True,GPU_No=0):
     if GPU_first:
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        device = torch.device("cuda:{}".format(GPU_No) if torch.cuda.is_available() else "cpu")
     else:
         device='cpu'
     return device

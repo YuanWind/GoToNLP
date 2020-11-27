@@ -94,8 +94,7 @@ def processor(dataType):
     dump_pkl_data(label_id, 'data/'+dataType+'_label_id(train).pkl')
     dump_pkl_data(id_label, 'data/'+dataType+'_id_label(train).pkl')
 
-processor('hotel')
-processor('phone')
+
     # dev_oov_word = []
     # test_oov_word = []
     # for word in dev_data:

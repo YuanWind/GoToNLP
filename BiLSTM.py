@@ -5,7 +5,7 @@
 # @File    : BiLSTM.py
 import torch
 from torch import nn
-from embedding import load_predtrained_emb_avg
+from utils import load_predtrained_emb_avg
 import torch.nn.functional as F
 from torch.autograd import Variable
 
@@ -24,8 +24,8 @@ class BiLSTM(nn.Module):
         self.embedding_dim=opts.embedding_dim
         self.bidirectional=opts.bidirectional
         #  nn.Embedding(num_embeddings: int, embedding_dim: int),(词汇表的大小，嵌入的维度）
-        self.embeddings = nn.Embedding(len(word_id), self.embedding_dim)  # 将词汇表进行embedding，由于找的预训练词向量是300维的，因此这里的第二个维度是300维
-        embedding = load_predtrained_emb_avg(word_id)  #自定义的方法读取预训练的词向量， 中文词向量来源：https://github.com/Embedding/Chinese-Word-Vectors
+        self.embeddings = nn.Embedding(len(word_id), self.embedding_dim)  # 将词汇表进行embedding，由于找的预训练词向量是300维的，因此这里的第二个维度是300维, 这里加 padding的id？
+        embedding = load_predtrained_emb_avg(word_id,opts.pre_embed_path)  #自定义的方法读取预训练的词向量， 中文词向量来源：https://github.com/Embedding/Chinese-Word-Vectors
         self.embeddings.weight.data.copy_(embedding)  # 将读取的词向量复制到嵌入向量中
 
         # bidirectional设为True即得到双向循环神经网络
@@ -92,5 +92,7 @@ class BiLSTM(nn.Module):
         sentence_batch = self.bi_fetch(outs, lengths, batch_size, max_len=max_len)
 
         out = self.output(sentence_batch)
-        out_prob = F.softmax(out.view(batch_size, -1))
+        out_prob = F.log_softmax(out.view(batch_size, -1)) #
+        # out_prob = F.softmax(out.view(batch_size, -1))
+
         return out_prob
