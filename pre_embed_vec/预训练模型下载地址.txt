@@ -1,0 +1,7 @@
+该文件夹下有两个预训练模型：
+1.   sgns.sogou.
+2.   sgns.target.word-ngram.1-2.dynwin5.thr10.neg5.dim300.iter5
+
+下载地址：
+1. 链接：https://pan.baidu.com/s/1tMK-RHbLufbO0VOZ2dIrrQ   提取码：zx77
+2. 链接：链接：https://pan.baidu.com/s/1zTRkYQTsVkxL99dyj7MqnQ 提取码：c0p4

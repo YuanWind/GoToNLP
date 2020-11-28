@@ -19,6 +19,7 @@ class opts():
         self.label_id_path=self.data_path+'/data/label2id.pkl'
         self.id_label_path=self.data_path+'/data/id2label.pkl'
         self.cuda = True
+        self.gpu_number=0
         self.seed=88
         self.lr= 5e-5
         self.lr_decay_rate=0.1

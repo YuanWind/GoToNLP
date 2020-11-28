@@ -13,9 +13,14 @@ from utils import  returnDevice
 
 class BiLSTM(nn.Module):
     def __init__(self, opts,word_id, label_id):
+        """
+        模型初始化
+        :param opts: 相关参数值
+        :param word_id: 根据训练集建立的词典 vocab
+        :param label_id: 标签到id的映射
+        """
         super(BiLSTM, self).__init__()
-
-        self.device = returnDevice(opts.cuda)
+        self.device = returnDevice(opts.cuda,opts.gpu_number)
         self.input_size = opts.input_size
         self.hidden_size = opts.hidden_size
         self.num_layers = opts.num_layers
@@ -24,7 +29,7 @@ class BiLSTM(nn.Module):
         self.embedding_dim=opts.embedding_dim
         self.bidirectional=opts.bidirectional
         #  nn.Embedding(num_embeddings: int, embedding_dim: int),(词汇表的大小，嵌入的维度）
-        self.embeddings = nn.Embedding(len(word_id), self.embedding_dim)  # 将词汇表进行embedding，由于找的预训练词向量是300维的，因此这里的第二个维度是300维, 这里加 padding的id？
+        self.embeddings = nn.Embedding(len(word_id), self.embedding_dim)  # 将词汇表进行embedding，由于找的预训练词向量是300维的，因此这里的第二个维度是300维, 这里加 padding的id
         embedding = load_predtrained_emb_avg(word_id,opts.pre_embed_path)  #自定义的方法读取预训练的词向量， 中文词向量来源：https://github.com/Embedding/Chinese-Word-Vectors
         self.embeddings.weight.data.copy_(embedding)  # 将读取的词向量复制到嵌入向量中
 
