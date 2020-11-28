@@ -1,6 +1,6 @@
 # 入门NLP项目—BiLSTM文本分类
 
-[TOC]
+运行项目前下载pre_embed_vec内的预训练模型，然后运行 main.py 即可
 
 ## 总结
 

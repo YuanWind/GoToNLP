@@ -1,6 +1,0 @@
-hotel_train_data='data/hotel_train.txt'
-hotel_dev_data='data/hotel_dev.txt'
-hotel_test_data='data/hotel_test.txt'
-phone_train_data='data/phone_train.txt'
-phone_dev_data='data/phone_dev.txt'
-phone_test_data='data/phone_test.txt'
