@@ -1,0 +1,382 @@
+opts:
+pre_embed_path:pre_embed_vec/sgns.target.word-ngram.1-2.dynwin5.thr10.neg5.dim300.iter5.txt
+log_dir:log
+log_fname:log.txt
+model_dir:saved_models
+data_path:THUCNews
+vocab_path:THUCNews/data/vocab.pkl
+class_path:THUCNews/data/class.txt
+train_data_path:THUCNews/data/train.txt
+dev_data_path:THUCNews/data/dev.txt
+test_data_path:THUCNews/data/test.txt
+label_id_path:THUCNews/data/label2id.pkl
+id_label_path:THUCNews/data/id2label.pkl
+cuda:True
+seed:88
+lr:5e-05
+lr_decay_rate:0.1
+lr_decay_every:3
+weight_decay:1e-08
+batch_size:32
+max_len:64
+epochs:100
+print_every_step:1000
+early_stop:10
+shuffle:False
+optims:Adam
+embedding_dim:300
+input_size:300
+hidden_size:300
+num_layers:2
+dropout:0.3
+batch_first:True
+bidirectional:True
+
+[2020-11-21 11-28-14] Epoch 0 step [1000] acc: 0.77 loss: 0.729174
+[2020-11-21 11-30-20] Epoch 0 step [2000] acc: 0.88 loss: 0.358648
+[2020-11-21 11-32-24] Epoch 0 step [3000] acc: 0.86 loss: 0.411098
+[2020-11-21 11-34-27] Epoch 0 step [4000] acc: 0.86 loss: 0.399472
+[2020-11-21 11-36-28] Epoch 0 step [5000] acc: 0.85 loss: 0.452053
+dev-->micro_f1=0.8020,macro_f1=0.8006,acc=80.2000,loss=0.6236
+
+model saved succeed in: saved_models/[2020-11-21 11-37-53]_epoch_0.pt
+Update! best dev acc: 80.20%
+[2020-11-21 11-40-02] Epoch 1 step [1000] acc: 0.90 loss: 0.293106
+[2020-11-21 11-42-09] Epoch 1 step [2000] acc: 0.92 loss: 0.242045
+[2020-11-21 11-44-13] Epoch 1 step [3000] acc: 0.90 loss: 0.298757
+[2020-11-21 11-46-17] Epoch 1 step [4000] acc: 0.90 loss: 0.298088
+[2020-11-21 11-48-18] Epoch 1 step [5000] acc: 0.88 loss: 0.356195
+dev-->micro_f1=0.8376,macro_f1=0.8368,acc=83.7600,loss=0.5076
+
+model saved succeed in: saved_models/[2020-11-21 11-49-42]_epoch_1.pt
+Update! best dev acc: 83.76%
+[2020-11-21 11-51-51] Epoch 2 step [1000] acc: 0.92 loss: 0.232719
+[2020-11-21 11-53-59] Epoch 2 step [2000] acc: 0.94 loss: 0.192295
+[2020-11-21 11-56-03] Epoch 2 step [3000] acc: 0.92 loss: 0.241773
+[2020-11-21 11-58-07] Epoch 2 step [4000] acc: 0.92 loss: 0.239491
+[2020-11-21 12-00-08] Epoch 2 step [5000] acc: 0.90 loss: 0.296810
+dev-->micro_f1=0.8597,macro_f1=0.8597,acc=85.9700,loss=0.4420
+
+model saved succeed in: saved_models/[2020-11-21 12-01-32]_epoch_2.pt
+Update! best dev acc: 85.97%
+[2020-11-21 12-03-42] Epoch 3 step [1000] acc: 0.94 loss: 0.189675
+[2020-11-21 12-05-49] Epoch 3 step [2000] acc: 0.95 loss: 0.156772
+[2020-11-21 12-07-53] Epoch 3 step [3000] acc: 0.93 loss: 0.199762
+[2020-11-21 12-10-00] Epoch 3 step [4000] acc: 0.93 loss: 0.198960
+[2020-11-21 12-12-03] Epoch 3 step [5000] acc: 0.92 loss: 0.250335
+dev-->micro_f1=0.8618,macro_f1=0.8624,acc=86.1800,loss=0.4441
+
+model saved succeed in: saved_models/[2020-11-21 12-13-31]_epoch_3.pt
+Update! best dev acc: 86.18%
+[2020-11-21 12-15-44] Epoch 4 step [1000] acc: 0.95 loss: 0.155322
+[2020-11-21 12-17-57] Epoch 4 step [2000] acc: 0.96 loss: 0.128043
+[2020-11-21 12-20-07] Epoch 4 step [3000] acc: 0.95 loss: 0.164659
+[2020-11-21 12-22-17] Epoch 4 step [4000] acc: 0.94 loss: 0.165328
+[2020-11-21 12-24-18] Epoch 4 step [5000] acc: 0.93 loss: 0.211982
+dev-->micro_f1=0.8650,macro_f1=0.8655,acc=86.5000,loss=0.4456
+
+model saved succeed in: saved_models/[2020-11-21 12-25-43]_epoch_4.pt
+Update! best dev acc: 86.50%
+[2020-11-21 12-27-53] Epoch 5 step [1000] acc: 0.96 loss: 0.124851
+[2020-11-21 12-30-01] Epoch 5 step [2000] acc: 0.97 loss: 0.102460
+[2020-11-21 12-32-06] Epoch 5 step [3000] acc: 0.96 loss: 0.134688
+[2020-11-21 12-34-10] Epoch 5 step [4000] acc: 0.95 loss: 0.137038
+[2020-11-21 12-36-12] Epoch 5 step [5000] acc: 0.94 loss: 0.179361
+dev-->micro_f1=0.8681,macro_f1=0.8689,acc=86.8100,loss=0.4501
+
+model saved succeed in: saved_models/[2020-11-21 12-37-36]_epoch_5.pt
+Update! best dev acc: 86.81%
+[2020-11-21 12-39-46] Epoch 6 step [1000] acc: 0.97 loss: 0.098098
+[2020-11-21 12-41-54] Epoch 6 step [2000] acc: 0.97 loss: 0.081314
+[2020-11-21 12-43-58] Epoch 6 step [3000] acc: 0.97 loss: 0.107351
+[2020-11-21 12-46-02] Epoch 6 step [4000] acc: 0.96 loss: 0.113995
+[2020-11-21 12-48-03] Epoch 6 step [5000] acc: 0.95 loss: 0.149491
+dev-->micro_f1=0.8759,macro_f1=0.8770,acc=87.5900,loss=0.4455
+
+model saved succeed in: saved_models/[2020-11-21 12-49-28]_epoch_6.pt
+Update! best dev acc: 87.59%
+[2020-11-21 12-51-38] Epoch 7 step [1000] acc: 0.98 loss: 0.075585
+[2020-11-21 12-53-45] Epoch 7 step [2000] acc: 0.98 loss: 0.062676
+[2020-11-21 12-55-49] Epoch 7 step [3000] acc: 0.97 loss: 0.084469
+[2020-11-21 12-57-53] Epoch 7 step [4000] acc: 0.97 loss: 0.092284
+[2020-11-21 12-59-54] Epoch 7 step [5000] acc: 0.96 loss: 0.122782
+dev-->micro_f1=0.8777,macro_f1=0.8787,acc=87.7700,loss=0.4649
+
+model saved succeed in: saved_models/[2020-11-21 13-01-19]_epoch_7.pt
+Update! best dev acc: 87.77%
+[2020-11-21 13-03-28] Epoch 8 step [1000] acc: 0.98 loss: 0.056671
+[2020-11-21 13-05-35] Epoch 8 step [2000] acc: 0.98 loss: 0.048185
+[2020-11-21 13-07-40] Epoch 8 step [3000] acc: 0.98 loss: 0.065077
+[2020-11-21 13-09-44] Epoch 8 step [4000] acc: 0.98 loss: 0.074040
+[2020-11-21 13-11-44] Epoch 8 step [5000] acc: 0.97 loss: 0.098078
+dev-->micro_f1=0.8883,macro_f1=0.8884,acc=88.8300,loss=0.4433
+
+model saved succeed in: saved_models/[2020-11-21 13-13-09]_epoch_8.pt
+Update! best dev acc: 88.83%
+[2020-11-21 17-24-25] Epoch 9 step [1000] acc: 0.99 loss: 0.042149
+[2020-11-21 17-26-31] Epoch 9 step [2000] acc: 0.99 loss: 0.038267
+[2020-11-21 17-28-34] Epoch 9 step [3000] acc: 0.98 loss: 0.049831
+[2020-11-21 17-30-38] Epoch 9 step [4000] acc: 0.98 loss: 0.057138
+[2020-11-21 17-32-39] Epoch 9 step [5000] acc: 0.98 loss: 0.076896
+dev-->micro_f1=0.8804,macro_f1=0.8804,acc=88.0400,loss=0.5158
+
+[2020-11-21 17-36-10] Epoch 10 step [1000] acc: 0.99 loss: 0.033287
+[2020-11-21 17-38-17] Epoch 10 step [2000] acc: 0.99 loss: 0.028687
+[2020-11-21 17-40-21] Epoch 10 step [3000] acc: 0.99 loss: 0.036534
+[2020-11-21 17-42-26] Epoch 10 step [4000] acc: 0.98 loss: 0.046057
+[2020-11-21 17-44-27] Epoch 10 step [5000] acc: 0.98 loss: 0.059518
+dev-->micro_f1=0.8849,macro_f1=0.8850,acc=88.4900,loss=0.5257
+
+[2020-11-21 17-47-59] Epoch 11 step [1000] acc: 0.99 loss: 0.025798
+[2020-11-21 17-50-06] Epoch 11 step [2000] acc: 0.99 loss: 0.022074
+[2020-11-21 17-52-11] Epoch 11 step [3000] acc: 0.99 loss: 0.027348
+[2020-11-21 17-54-15] Epoch 11 step [4000] acc: 0.99 loss: 0.036517
+[2020-11-21 17-56-16] Epoch 11 step [5000] acc: 0.99 loss: 0.045814
+dev-->micro_f1=0.8889,macro_f1=0.8892,acc=88.8900,loss=0.5408
+
+model saved succeed in: saved_models/[2020-11-21 17-57-41]_epoch_11.pt
+Update! best dev acc: 88.89%
+[2020-11-21 17-59-50] Epoch 12 step [1000] acc: 0.99 loss: 0.022229
+[2020-11-21 18-01-58] Epoch 12 step [2000] acc: 0.99 loss: 0.018626
+[2020-11-21 18-04-02] Epoch 12 step [3000] acc: 0.99 loss: 0.020000
+[2020-11-21 18-06-06] Epoch 12 step [4000] acc: 0.99 loss: 0.026263
+[2020-11-21 18-08-07] Epoch 12 step [5000] acc: 0.99 loss: 0.035736
+dev-->micro_f1=0.8882,macro_f1=0.8882,acc=88.8200,loss=0.5892
+
+[2020-11-21 18-11-39] Epoch 13 step [1000] acc: 0.99 loss: 0.018962
+[2020-11-21 18-13-47] Epoch 13 step [2000] acc: 1.00 loss: 0.015783
+[2020-11-21 18-15-52] Epoch 13 step [3000] acc: 0.99 loss: 0.017854
+[2020-11-21 18-17-56] Epoch 13 step [4000] acc: 0.99 loss: 0.020814
+[2020-11-21 18-19-57] Epoch 13 step [5000] acc: 0.99 loss: 0.028241
+dev-->micro_f1=0.8949,macro_f1=0.8948,acc=89.4900,loss=0.5803
+
+model saved succeed in: saved_models/[2020-11-21 18-21-22]_epoch_13.pt
+Update! best dev acc: 89.49%
+[2020-11-21 18-23-31] Epoch 14 step [1000] acc: 1.00 loss: 0.014734
+[2020-11-21 18-25-39] Epoch 14 step [2000] acc: 1.00 loss: 0.013300
+[2020-11-21 18-27-44] Epoch 14 step [3000] acc: 1.00 loss: 0.015109
+[2020-11-21 18-29-48] Epoch 14 step [4000] acc: 0.99 loss: 0.018969
+[2020-11-21 18-31-49] Epoch 14 step [5000] acc: 0.99 loss: 0.021601
+dev-->micro_f1=0.8967,macro_f1=0.8965,acc=89.6700,loss=0.5668
+
+model saved succeed in: saved_models/[2020-11-21 18-33-15]_epoch_14.pt
+Update! best dev acc: 89.67%
+[2020-11-21 18-35-24] Epoch 15 step [1000] acc: 1.00 loss: 0.015197
+[2020-11-21 18-37-32] Epoch 15 step [2000] acc: 1.00 loss: 0.010220
+[2020-11-21 18-39-36] Epoch 15 step [3000] acc: 1.00 loss: 0.011612
+[2020-11-21 18-41-41] Epoch 15 step [4000] acc: 0.99 loss: 0.014793
+[2020-11-21 18-43-42] Epoch 15 step [5000] acc: 0.99 loss: 0.017891
+dev-->micro_f1=0.8909,macro_f1=0.8906,acc=89.0900,loss=0.6598
+
+[2020-11-21 18-47-14] Epoch 16 step [1000] acc: 1.00 loss: 0.012872
+[2020-11-21 18-49-21] Epoch 16 step [2000] acc: 1.00 loss: 0.011230
+[2020-11-21 18-51-26] Epoch 16 step [3000] acc: 1.00 loss: 0.010670
+[2020-11-21 18-53-30] Epoch 16 step [4000] acc: 1.00 loss: 0.011169
+[2020-11-21 18-55-31] Epoch 16 step [5000] acc: 1.00 loss: 0.015134
+dev-->micro_f1=0.8925,macro_f1=0.8928,acc=89.2500,loss=0.6054
+
+[2020-11-21 18-59-03] Epoch 17 step [1000] acc: 1.00 loss: 0.011836
+[2020-11-21 19-01-10] Epoch 17 step [2000] acc: 1.00 loss: 0.006693
+[2020-11-21 19-03-15] Epoch 17 step [3000] acc: 1.00 loss: 0.008105
+[2020-11-21 19-05-19] Epoch 17 step [4000] acc: 1.00 loss: 0.011997
+[2020-11-21 19-07-20] Epoch 17 step [5000] acc: 1.00 loss: 0.014422
+dev-->micro_f1=0.8942,macro_f1=0.8941,acc=89.4200,loss=0.6557
+
+3 epochs passed, has not improved, so adjust lr to 4.5e-05
+[2020-11-21 19-10-53] Epoch 18 step [1000] acc: 1.00 loss: 0.007815
+[2020-11-21 19-13-00] Epoch 18 step [2000] acc: 1.00 loss: 0.006971
+[2020-11-21 19-15-05] Epoch 18 step [3000] acc: 1.00 loss: 0.007154
+[2020-11-21 19-17-09] Epoch 18 step [4000] acc: 1.00 loss: 0.007672
+[2020-11-21 19-19-10] Epoch 18 step [5000] acc: 1.00 loss: 0.012023
+dev-->micro_f1=0.8980,macro_f1=0.8980,acc=89.8000,loss=0.6549
+
+model saved succeed in: saved_models/[2020-11-21 19-20-35]_epoch_18.pt
+Update! best dev acc: 89.80%
+[2020-11-21 19-22-44] Epoch 19 step [1000] acc: 1.00 loss: 0.009003
+[2020-11-21 19-24-52] Epoch 19 step [2000] acc: 1.00 loss: 0.006496
+[2020-11-21 19-26-57] Epoch 19 step [3000] acc: 1.00 loss: 0.007921
+[2020-11-21 19-29-01] Epoch 19 step [4000] acc: 1.00 loss: 0.008334
+[2020-11-21 19-31-02] Epoch 19 step [5000] acc: 1.00 loss: 0.010087
+dev-->micro_f1=0.9004,macro_f1=0.9006,acc=90.0400,loss=0.6686
+
+model saved succeed in: saved_models/[2020-11-21 19-32-27]_epoch_19.pt
+Update! best dev acc: 90.04%
+[2020-11-21 19-34-37] Epoch 20 step [1000] acc: 1.00 loss: 0.007190
+[2020-11-21 19-36-44] Epoch 20 step [2000] acc: 1.00 loss: 0.005546
+[2020-11-21 19-38-48] Epoch 20 step [3000] acc: 1.00 loss: 0.006036
+[2020-11-21 19-40-53] Epoch 20 step [4000] acc: 1.00 loss: 0.006262
+[2020-11-21 19-42-54] Epoch 20 step [5000] acc: 1.00 loss: 0.008854
+dev-->micro_f1=0.8994,macro_f1=0.8991,acc=89.9400,loss=0.6873
+
+[2020-11-21 19-46-26] Epoch 21 step [1000] acc: 1.00 loss: 0.008910
+[2020-11-21 19-48-33] Epoch 21 step [2000] acc: 1.00 loss: 0.008407
+[2020-11-21 19-50-38] Epoch 21 step [3000] acc: 1.00 loss: 0.003934
+[2020-11-21 19-52-42] Epoch 21 step [4000] acc: 1.00 loss: 0.005173
+[2020-11-21 19-54-43] Epoch 21 step [5000] acc: 1.00 loss: 0.008759
+dev-->micro_f1=0.9017,macro_f1=0.9015,acc=90.1700,loss=0.6940
+
+model saved succeed in: saved_models/[2020-11-21 19-56-08]_epoch_21.pt
+Update! best dev acc: 90.17%
+[2020-11-21 19-58-17] Epoch 22 step [1000] acc: 1.00 loss: 0.007756
+[2020-11-21 20-00-25] Epoch 22 step [2000] acc: 1.00 loss: 0.006265
+[2020-11-21 20-02-29] Epoch 22 step [3000] acc: 1.00 loss: 0.007041
+[2020-11-21 20-04-33] Epoch 22 step [4000] acc: 1.00 loss: 0.004347
+[2020-11-21 20-06-34] Epoch 22 step [5000] acc: 1.00 loss: 0.006755
+dev-->micro_f1=0.9035,macro_f1=0.9036,acc=90.3500,loss=0.6708
+
+model saved succeed in: saved_models/[2020-11-21 20-07-59]_epoch_22.pt
+Update! best dev acc: 90.35%
+[2020-11-21 20-10-08] Epoch 23 step [1000] acc: 1.00 loss: 0.005156
+[2020-11-21 20-12-16] Epoch 23 step [2000] acc: 1.00 loss: 0.005157
+[2020-11-21 20-14-20] Epoch 23 step [3000] acc: 1.00 loss: 0.005983
+[2020-11-21 20-16-24] Epoch 23 step [4000] acc: 1.00 loss: 0.003555
+[2020-11-21 20-18-26] Epoch 23 step [5000] acc: 1.00 loss: 0.007399
+dev-->micro_f1=0.8978,macro_f1=0.8977,acc=89.7800,loss=0.6916
+
+[2020-11-21 20-21-58] Epoch 24 step [1000] acc: 1.00 loss: 0.005871
+[2020-11-21 20-24-05] Epoch 24 step [2000] acc: 1.00 loss: 0.004715
+[2020-11-21 20-26-10] Epoch 24 step [3000] acc: 1.00 loss: 0.005488
+[2020-11-21 20-28-14] Epoch 24 step [4000] acc: 1.00 loss: 0.004066
+[2020-11-21 20-30-15] Epoch 24 step [5000] acc: 1.00 loss: 0.007557
+dev-->micro_f1=0.9009,macro_f1=0.9010,acc=90.0900,loss=0.6946
+
+[2020-11-21 20-33-47] Epoch 25 step [1000] acc: 1.00 loss: 0.005998
+[2020-11-21 20-35-55] Epoch 25 step [2000] acc: 1.00 loss: 0.003643
+[2020-11-21 20-37-59] Epoch 25 step [3000] acc: 1.00 loss: 0.004506
+[2020-11-21 20-40-04] Epoch 25 step [4000] acc: 1.00 loss: 0.005714
+[2020-11-21 20-42-05] Epoch 25 step [5000] acc: 1.00 loss: 0.005592
+dev-->micro_f1=0.9012,macro_f1=0.9012,acc=90.1200,loss=0.6966
+
+3 epochs passed, has not improved, so adjust lr to 4.05e-05
+[2020-11-21 20-45-37] Epoch 26 step [1000] acc: 1.00 loss: 0.005945
+[2020-11-21 20-47-44] Epoch 26 step [2000] acc: 1.00 loss: 0.004071
+[2020-11-21 20-49-49] Epoch 26 step [3000] acc: 1.00 loss: 0.003766
+[2020-11-21 20-51-53] Epoch 26 step [4000] acc: 1.00 loss: 0.003361
+[2020-11-21 20-53-54] Epoch 26 step [5000] acc: 1.00 loss: 0.004569
+dev-->micro_f1=0.8984,macro_f1=0.8986,acc=89.8400,loss=0.7567
+
+[2020-11-21 20-57-26] Epoch 27 step [1000] acc: 1.00 loss: 0.006252
+[2020-11-21 20-59-33] Epoch 27 step [2000] acc: 1.00 loss: 0.005015
+[2020-11-21 21-01-38] Epoch 27 step [3000] acc: 1.00 loss: 0.003088
+[2020-11-21 21-03-42] Epoch 27 step [4000] acc: 1.00 loss: 0.002662
+[2020-11-21 21-05-43] Epoch 27 step [5000] acc: 1.00 loss: 0.004705
+dev-->micro_f1=0.9023,macro_f1=0.9024,acc=90.2300,loss=0.7190
+
+[2020-11-21 21-09-15] Epoch 28 step [1000] acc: 1.00 loss: 0.006342
+[2020-11-21 21-11-22] Epoch 28 step [2000] acc: 1.00 loss: 0.003282
+[2020-11-21 21-13-27] Epoch 28 step [3000] acc: 1.00 loss: 0.002321
+[2020-11-21 21-15-31] Epoch 28 step [4000] acc: 1.00 loss: 0.003795
+[2020-11-21 21-17-32] Epoch 28 step [5000] acc: 1.00 loss: 0.005291
+dev-->micro_f1=0.8998,macro_f1=0.8999,acc=89.9800,loss=0.7624
+
+6 epochs passed, has not improved, so adjust lr to 3.6450000000000005e-05
+[2020-11-21 21-21-04] Epoch 29 step [1000] acc: 1.00 loss: 0.003616
+[2020-11-21 21-23-12] Epoch 29 step [2000] acc: 1.00 loss: 0.003757
+[2020-11-21 21-25-16] Epoch 29 step [3000] acc: 1.00 loss: 0.002366
+[2020-11-21 21-27-21] Epoch 29 step [4000] acc: 1.00 loss: 0.002951
+[2020-11-21 21-29-22] Epoch 29 step [5000] acc: 1.00 loss: 0.004067
+dev-->micro_f1=0.8994,macro_f1=0.9000,acc=89.9400,loss=0.7592
+
+[2020-11-21 21-32-54] Epoch 30 step [1000] acc: 1.00 loss: 0.004228
+[2020-11-21 21-35-01] Epoch 30 step [2000] acc: 1.00 loss: 0.002911
+[2020-11-21 21-37-05] Epoch 30 step [3000] acc: 1.00 loss: 0.003559
+[2020-11-21 21-39-09] Epoch 30 step [4000] acc: 1.00 loss: 0.002473
+[2020-11-21 21-41-10] Epoch 30 step [5000] acc: 1.00 loss: 0.003184
+dev-->micro_f1=0.9024,macro_f1=0.9026,acc=90.2400,loss=0.7552
+
+[2020-11-21 21-44-43] Epoch 31 step [1000] acc: 1.00 loss: 0.003924
+[2020-11-21 21-46-50] Epoch 31 step [2000] acc: 1.00 loss: 0.002491
+[2020-11-21 21-48-55] Epoch 31 step [3000] acc: 1.00 loss: 0.002219
+[2020-11-21 21-50-59] Epoch 31 step [4000] acc: 1.00 loss: 0.002803
+[2020-11-21 21-53-00] Epoch 31 step [5000] acc: 1.00 loss: 0.003207
+dev-->micro_f1=0.8922,macro_f1=0.8921,acc=89.2200,loss=0.8810
+
+9 epochs passed, has not improved, so adjust lr to 3.280500000000001e-05
+[2020-11-21 21-56-32] Epoch 32 step [1000] acc: 1.00 loss: 0.004142
+[2020-11-21 21-58-40] Epoch 32 step [2000] acc: 1.00 loss: 0.002643
+[2020-11-21 22-00-44] Epoch 32 step [3000] acc: 1.00 loss: 0.002583
+[2020-11-21 22-02-48] Epoch 32 step [4000] acc: 1.00 loss: 0.002106
+[2020-11-21 22-04-49] Epoch 32 step [5000] acc: 1.00 loss: 0.002569
+dev-->micro_f1=0.9050,macro_f1=0.9050,acc=90.5000,loss=0.7677
+
+model saved succeed in: saved_models/[2020-11-21 22-06-14]_epoch_32.pt
+Update! best dev acc: 90.50%
+[2020-11-21 22-08-24] Epoch 33 step [1000] acc: 1.00 loss: 0.003468
+[2020-11-21 22-10-31] Epoch 33 step [2000] acc: 1.00 loss: 0.003057
+[2020-11-21 22-12-35] Epoch 33 step [3000] acc: 1.00 loss: 0.002000
+[2020-11-21 22-14-40] Epoch 33 step [4000] acc: 1.00 loss: 0.002181
+[2020-11-21 22-16-41] Epoch 33 step [5000] acc: 1.00 loss: 0.002729
+dev-->micro_f1=0.9029,macro_f1=0.9029,acc=90.2900,loss=0.8021
+
+[2020-11-21 22-20-13] Epoch 34 step [1000] acc: 1.00 loss: 0.003863
+[2020-11-21 22-22-20] Epoch 34 step [2000] acc: 1.00 loss: 0.004470
+[2020-11-21 22-24-25] Epoch 34 step [3000] acc: 1.00 loss: 0.002253
+[2020-11-21 22-26-29] Epoch 34 step [4000] acc: 1.00 loss: 0.001900
+[2020-11-21 22-28-31] Epoch 34 step [5000] acc: 1.00 loss: 0.002262
+dev-->micro_f1=0.9013,macro_f1=0.9016,acc=90.1300,loss=0.8268
+
+[2020-11-21 22-32-03] Epoch 35 step [1000] acc: 1.00 loss: 0.003167
+[2020-11-21 22-34-10] Epoch 35 step [2000] acc: 1.00 loss: 0.003295
+[2020-11-21 22-36-15] Epoch 35 step [3000] acc: 1.00 loss: 0.002360
+[2020-11-21 22-38-19] Epoch 35 step [4000] acc: 1.00 loss: 0.002229
+[2020-11-21 22-40-20] Epoch 35 step [5000] acc: 1.00 loss: 0.002706
+dev-->micro_f1=0.8987,macro_f1=0.8991,acc=89.8700,loss=0.8137
+
+3 epochs passed, has not improved, so adjust lr to 2.952450000000001e-05
+[2020-11-21 22-43-52] Epoch 36 step [1000] acc: 1.00 loss: 0.003402
+[2020-11-21 22-46-00] Epoch 36 step [2000] acc: 1.00 loss: 0.002220
+[2020-11-21 22-48-04] Epoch 36 step [3000] acc: 1.00 loss: 0.002799
+[2020-11-21 22-50-09] Epoch 36 step [4000] acc: 1.00 loss: 0.001596
+[2020-11-21 22-52-10] Epoch 36 step [5000] acc: 1.00 loss: 0.002206
+dev-->micro_f1=0.9020,macro_f1=0.9023,acc=90.2000,loss=0.8163
+
+[2020-11-21 22-55-42] Epoch 37 step [1000] acc: 1.00 loss: 0.002595
+[2020-11-21 22-57-50] Epoch 37 step [2000] acc: 1.00 loss: 0.002182
+[2020-11-21 22-59-54] Epoch 37 step [3000] acc: 1.00 loss: 0.001602
+[2020-11-21 23-01-58] Epoch 37 step [4000] acc: 1.00 loss: 0.001602
+[2020-11-21 23-03-59] Epoch 37 step [5000] acc: 1.00 loss: 0.001727
+dev-->micro_f1=0.9035,macro_f1=0.9036,acc=90.3500,loss=0.8148
+
+[2020-11-21 23-07-32] Epoch 38 step [1000] acc: 1.00 loss: 0.002431
+[2020-11-21 23-09-39] Epoch 38 step [2000] acc: 1.00 loss: 0.002228
+[2020-11-21 23-11-44] Epoch 38 step [3000] acc: 1.00 loss: 0.002294
+[2020-11-21 23-13-48] Epoch 38 step [4000] acc: 1.00 loss: 0.002208
+[2020-11-21 23-15-49] Epoch 38 step [5000] acc: 1.00 loss: 0.001640
+dev-->micro_f1=0.9031,macro_f1=0.9032,acc=90.3100,loss=0.8453
+
+6 epochs passed, has not improved, so adjust lr to 2.657205000000001e-05
+[2020-11-21 23-19-22] Epoch 39 step [1000] acc: 1.00 loss: 0.002548
+[2020-11-21 23-21-29] Epoch 39 step [2000] acc: 1.00 loss: 0.001917
+[2020-11-21 23-23-34] Epoch 39 step [3000] acc: 1.00 loss: 0.001981
+[2020-11-21 23-25-38] Epoch 39 step [4000] acc: 1.00 loss: 0.001776
+[2020-11-21 23-27-39] Epoch 39 step [5000] acc: 1.00 loss: 0.001769
+dev-->micro_f1=0.9032,macro_f1=0.9034,acc=90.3200,loss=0.8489
+
+[2020-11-21 23-31-12] Epoch 40 step [1000] acc: 1.00 loss: 0.001726
+[2020-11-21 23-33-19] Epoch 40 step [2000] acc: 1.00 loss: 0.001677
+[2020-11-21 23-35-24] Epoch 40 step [3000] acc: 1.00 loss: 0.002895
+[2020-11-21 23-37-28] Epoch 40 step [4000] acc: 1.00 loss: 0.001481
+[2020-11-21 23-39-29] Epoch 40 step [5000] acc: 1.00 loss: 0.001548
+dev-->micro_f1=0.8896,macro_f1=0.8901,acc=88.9600,loss=0.9354
+
+[2020-11-21 23-43-01] Epoch 41 step [1000] acc: 1.00 loss: 0.002179
+[2020-11-21 23-45-09] Epoch 41 step [2000] acc: 1.00 loss: 0.002394
+[2020-11-21 23-47-13] Epoch 41 step [3000] acc: 1.00 loss: 0.001948
+[2020-11-21 23-49-18] Epoch 41 step [4000] acc: 1.00 loss: 0.001681
+[2020-11-21 23-51-19] Epoch 41 step [5000] acc: 1.00 loss: 0.001736
+dev-->micro_f1=0.9034,macro_f1=0.9035,acc=90.3400,loss=0.8427
+
+9 epochs passed, has not improved, so adjust lr to 2.391484500000001e-05
+[2020-11-21 23-54-51] Epoch 42 step [1000] acc: 1.00 loss: 0.003177
+[2020-11-21 23-56-59] Epoch 42 step [2000] acc: 1.00 loss: 0.001732
+[2020-11-21 23-59-04] Epoch 42 step [3000] acc: 1.00 loss: 0.001606
+[2020-11-22 00-01-08] Epoch 42 step [4000] acc: 1.00 loss: 0.001319
+[2020-11-22 00-03-09] Epoch 42 step [5000] acc: 1.00 loss: 0.001379
+dev-->micro_f1=0.9015,macro_f1=0.9018,acc=90.1500,loss=0.8577
+
+10 epochs passed, has not improved, so early stop the train!
+训练模型共用时：45509.614s
+加载dev上效果最好的模型评测test数据集：
+model_name:[2020-11-21 22-06-14]_epoch_32.pt
+ micro_f1=0.9095,macro_f1=0.9094,acc=90.9500,loss=0.7251
+
